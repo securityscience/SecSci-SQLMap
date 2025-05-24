@@ -278,7 +278,7 @@ class BurpExtender(IBurpExtender, ITab, IContextMenuFactory, IScannerListener):
         optimization_panel.setBorder(panel_title)
 
         optimization_options = [
-            ("Optimize (-o)", "-o"), ("Keep-Alive", "--keep-alive"), ("Output Prediction", "--predict-output"),
+            ("Optimize (-o)", "-o"), ("Keep-Alive", "--keep-alive"), ("Output Prediction", "--predict-output.disabled"),
             ("Null Connection", "--null-connection")
         ]
 
@@ -286,6 +286,7 @@ class BurpExtender(IBurpExtender, ITab, IContextMenuFactory, IScannerListener):
 
         for optimization_label, optimization_value in optimization_options:
             self.optimization_checkbox = JCheckBox(optimization_label)
+            if "disabled" in optimization_value: self.optimization_checkbox.setEnabled(False)
             self.optimization_checkbox.setFont(Font("Arial", Font.BOLD, 10))
             self.optimization_checkbox.setActionCommand(optimization_value)
             self.optimization_checkboxes.append(self.optimization_checkbox)
