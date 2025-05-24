@@ -17,11 +17,11 @@ an automated SQL injection and database takeover tool.
 
 Before installing the extension, ensure the following:
 
-| Component       | Required | Notes                                                                                                                                                                         |
-|-----------------|----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BurpSuite       | ✅        | [Professional version](https://portswigger.net/burp/documentation/desktop/getting-started/download-and-install)                                                               |
-| Jython          | ✅        | [Download Jython](https://www.jython.org/download) (e.g., `jython-standalone-2.7.4.jar`)                                                                                      |
-| Python (Jython) | ✅        | Must use Python 2.7 syntax                                                                                                                                                    |
+| Component       | Required | Notes                                                                                                                                                                  |
+|-----------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| BurpSuite       | ✅        | [Professional version](https://portswigger.net/burp/documentation/desktop/getting-started/download-and-install)                                                        |
+| Jython          | ✅        | [Download Jython](https://www.jython.org/download) (e.g., `jython-standalone-2.7.4.jar`)                                                                               |
+| Python (Jython) | ✅        | Must use Python 2.7 syntax                                                                                                                                             |
 | SQLMap          | ✅        | Ensure [`sqlmap`](https://sqlmap.org/) is installed and added to Environment Variable<br/>- Windows: `set sqlmap=sqlmap_path`<br/>- Linux: `export sqlmap=sqlmap_path` |
 
 
@@ -39,7 +39,7 @@ set sqlmap=sqlmap_path
 **Example:**
 
 ```cmd
-set sqlmap=C:\tools\sqlmap
+set sqlmap=C:\tools\sqlmap\sqlmap.py
 ```
 
 #### **Permanently (via GUI):**
@@ -50,19 +50,19 @@ set sqlmap=C:\tools\sqlmap
 
    * Click **New** to create a new variable.
    * Name: `sqlmap`
-   * Value: `C:\tools\sqlmap`
+   * Value: `C:\tools\sqlmap\sqlmap.py`
 4. Click OK.
 
 #### **Permanently (via Command Line – Admin PowerShell):**
 
 ```powershell
-[Environment]::SetEnvironmentVariable("sqlmap", "C:\tools\sqlmap", "User")
+[Environment]::SetEnvironmentVariable("sqlmap", "C:\tools\sqlmap\sqlmap.py", "User")
 ```
 
 To set it system-wide:
 
 ```powershell
-[Environment]::SetEnvironmentVariable("sqlmap", "C:\tools\sqlmap", "Machine")
+[Environment]::SetEnvironmentVariable("sqlmap", "C:\tools\sqlmap\sqlmap.py", "Machine")
 ```
 
 ---
@@ -78,7 +78,7 @@ export sqlmap=sqlmap_path
 **Example:**
 
 ```bash
-export sqlmap=/opt/sqlmap
+export sqlmap=/opt/sqlmap/sqlmap.py
 ```
 
 #### **Permanently (for a specific user):**
@@ -86,7 +86,7 @@ export sqlmap=/opt/sqlmap
 1. Add to `~/.bashrc`, `~/.zshrc`, or `~/.profile` (depending on shell):
 
 ```bash
-export sqlmap=/opt/sqlmap
+export sqlmap=/opt/sqlmap/sqlmap.py
 ```
 
 2. Then, apply the change:
@@ -100,7 +100,7 @@ source ~/.bashrc    # or source ~/.zshrc
 - Add to `/etc/environment`:
 
 ```bash
-sqlmap="/opt/sqlmap"
+sqlmap="/opt/sqlmap/sqlmap.py"
 ```
 
 - Then reboot or run:
@@ -128,7 +128,7 @@ source /etc/environment
 
 ### 3. Add the Extension
 
-1. Download [ [zip](https://github.com/securityscience/SecSci-SQLMao/zipball/main) | [tar](https://github.com/securityscience/SecSci-SQLMap/tarball/main) ] SecSci SQLMap
+1. Download [ [zip](https://github.com/securityscience/SecSci-SQLMap/zipball/main) | [tar](https://github.com/securityscience/SecSci-SQLMap/tarball/main) ] SecSci SQLMap
    - Unzip or Untar the downloaded `SecSci-SQLMap.zip|.tar` file
 2. Go to **Extender** → **Extensions**
 3. Click **Add**
@@ -150,7 +150,7 @@ Once the extension is loaded in BurpSuite:
 - Verified results will appear in **Target** tab → [target_host] → *Issues** pane with detailed output as custom findings.
 
 - Alternatively, SQLMap can be initiated manually by right clicking an HTTP *Request* or *Response* from **Proxy**, **Repeater**, or **Target** tab.
-  - Right-click a request → choose **Extensions → SecSci SQLMap** to run SecSci SQLMap.
+  - Right-click a request → choose **Extensions → SecSci SQLMap** to run SQLMap.
     ![Context Menu](images/sqlmap-context-menu.png)
 
     **Console Output**
