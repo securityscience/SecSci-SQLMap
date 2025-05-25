@@ -18,7 +18,7 @@ from java.awt.event import ActionListener
 from java.lang import Short
 from java.util import ArrayList
 from datetime import datetime
-import subprocess, threading, os, re
+import subprocess, threading, shutil, os, re
 
 
 sqlmap_options = []
@@ -41,7 +41,7 @@ def run_sqlmap(sqlmap_cmd, request_url, request_file, messageInfo, httpService, 
                 f.write(sqlmap_output)
             print("[+] Exported SQLMap result to %s" % os.path.abspath(result_filename))
 
-            extract_data = re.search(r"Parameter:.*?(?=\[\d{2}:\d{2}:\d{2}\] \[INFO\] fetched data logged to text files)",
+            extract_data = re.search(r"sqlmap identified the following injection.*?(?=\[\d{2}:\d{2}:\d{2}\] \[INFO\] fetched data logged to text files)",
                               sqlmap_output, re.DOTALL)
 
             if extract_data:
@@ -132,6 +132,12 @@ class BurpExtender(IBurpExtender, ITab, IContextMenuFactory, IScannerListener):
         self._callbacks = callbacks
         self._helpers = callbacks.getHelpers()
         callbacks.setExtensionName("SecSci SQLMap")
+
+        shutil.rmtree("Results", ignore_errors=True)
+        try:
+            os.mkdir("Results")
+        except Exception as e:
+            print(e)
 
         # Main Panel Scrollable
         self._main_panel = JPanel(BorderLayout())
@@ -366,7 +372,8 @@ class BurpExtender(IBurpExtender, ITab, IContextMenuFactory, IScannerListener):
         request_info = self._helpers.analyzeRequest(messageInfo)
         headers = request_info.getHeaders()
         body_bytes = messageInfo.getRequest()[request_info.getBodyOffset():]
-        body = ''.join([chr((b + 256) % 256) for b in body_bytes])
+        body = ''.join([chr((b + 256) % 256) for b in body_bytes]).replace("'", "")
+        the_body = re.sub(r"('|%27)", "", body, flags=re.IGNORECASE)
 
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S%f")
         request_file = "Results/{}_sqlmap_{}".format(host, timestamp)
@@ -377,7 +384,7 @@ class BurpExtender(IBurpExtender, ITab, IContextMenuFactory, IScannerListener):
                 for header in headers[1:]:
                     f.write(header + "\r\n")
                 f.write("\r\n")
-                f.write(body)
+                f.write(the_body)
             print("[+] Exported HTTP Request to %s.request" % os.path.abspath(request_file))
         except Exception as e:
             print("[!] Error writing file: %s" % str(e))
