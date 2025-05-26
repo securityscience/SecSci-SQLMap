@@ -1,7 +1,7 @@
 # ---------------------------------------
-# Sec-Sci SQLMap v1.0.250524 - May 2025
+# Sec-Sci SQLMap v1.1.250525 - May 2025
 # ---------------------------------------
-# Tool:      Sec-Sci SQLMap v1.0.250524
+# Tool:      Sec-Sci SQLMap v1.1.250525
 # Site:      www.security-science.com
 # Email:     RnD@security-science.com
 # Creator:   ARNEL C. REYES
