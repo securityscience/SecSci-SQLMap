@@ -24,6 +24,47 @@ import subprocess, threading, shutil, os, re
 sqlmap_options = []
 request_file_ctr = 0
 
+def is_python_installed():
+    try:
+        process = subprocess.Popen(["python", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        if process.returncode == 0:
+            print("[INFO] Python is installed: {}".format(stdout.strip()))
+            return True
+        else:
+            print("[Error] Python not found")
+            return False
+    except Exception as e:
+        print("[Error] Error checking Python:", e)
+        return False
+
+
+def is_sqlmap_installed():
+    sqlmap_path = os.environ.get("SQLMAP")
+    if sqlmap_path:
+        print("[INFO] SQLMAP environment variable is set to: {}".format(sqlmap_path))
+        try:
+            process = subprocess.Popen(["python", r"{}".format(sqlmap_path), "--version"],
+                                       stdin=subprocess.PIPE,
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE)
+            stdout, stderr = process.communicate(input=b'\n')
+            output = (stdout or stderr).decode().strip()
+            version = re.search(r"(\d+\.\d+\.\d+(?:\.\d+)?(?:#\w+)?)", output)
+            if process.returncode == 0:
+                print("[INFO] SQLMap version: {}".format(version.group(0)))
+                return True
+            else:
+                print("[ERROR] SQLMap not found or not executable")
+                print("[DEBUG] Output: {}".format(stderr))
+                return False
+        except Exception as e:
+            print("[EXCEPT] Error checking SQLMap:", e)
+            return False
+    else:
+        print("[ERROR] SQLMAP environment variable is not set (e.g., SQLMAP=SQLMAP_PATH\sqlmap.py)")
+        return False
+
 
 def run_sqlmap(sqlmap_cmd, request_url, request_file, messageInfo, httpService, callbacks):
     print('[INFO] SQLMap for {}'.format(request_url))
@@ -132,6 +173,9 @@ class BurpExtender(IBurpExtender, ITab, IContextMenuFactory, IScannerListener):
         self._callbacks = callbacks
         self._helpers = callbacks.getHelpers()
         callbacks.setExtensionName("SecSci SQLMap")
+
+        if not is_python_installed() or not is_sqlmap_installed():
+            return
 
         shutil.rmtree("Results", ignore_errors=True)
         try:
@@ -391,7 +435,7 @@ class BurpExtender(IBurpExtender, ITab, IContextMenuFactory, IScannerListener):
             return
 
         sqlmap_options_str = " ".join(sqlmap_options)
-        sqlmap_cmd = 'python "{0}" -r {1}.request {2} --output-dir={1}'.format(os.environ.get("sqlmap", None),
+        sqlmap_cmd = 'python "{0}" -r {1}.request {2} --output-dir={1}'.format(os.environ.get("SQLMAP", None),
                                                            request_file, sqlmap_options_str)
 
         thread = threading.Thread(target=run_sqlmap,
