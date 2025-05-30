@@ -1,7 +1,7 @@
 # ---------------------------------------
-# Sec-Sci SQLMap v1.1.250525 - May 2025
+# Sec-Sci SQLMap v1.2.250529 - May 2025
 # ---------------------------------------
-# Tool:      Sec-Sci SQLMap v1.1.250525
+# Tool:      Sec-Sci SQLMap v1.2.250529
 # Site:      www.security-science.com
 # Email:     RnD@security-science.com
 # Creator:   ARNEL C. REYES
@@ -66,7 +66,7 @@ def is_sqlmap_installed():
         return False
 
 
-def run_sqlmap(sqlmap_cmd, request_url, request_file, messageInfo, httpService, callbacks):
+def run_sqlmap(sqlmap_cmd, request_url, host, request_file, messageInfo, httpService, callbacks):
     print('[INFO] SQLMap for {}'.format(request_url))
     print('[RUNNING] {}'.format(sqlmap_cmd))
 
@@ -74,28 +74,22 @@ def run_sqlmap(sqlmap_cmd, request_url, request_file, messageInfo, httpService, 
         # sqlmap_output = subprocess.check_output(sqlmap_cmd, stderr=subprocess.STDOUT)
         sqlmap_output = subprocess.check_output(sqlmap_cmd, stderr=subprocess.STDOUT, shell=True,
                                                 universal_newlines=True)
-        # print('[!] SQLMap output\n{}'.format(sqlmap_output))
-        result_filename = request_file + ".output"
+        result_filename = request_file + "/" + host + "/log"
         try:
-            with open(result_filename, 'w') as f:
-                # Write SQLMap Result
-                f.write(sqlmap_output)
+            with open(result_filename, 'r') as f:
+                # Read SQLMap Result
+                result_content = f.read()
             print("[+] Exported SQLMap result to %s" % os.path.abspath(result_filename))
 
-            extract_data = re.search(r"sqlmap identified the following injection.*?(?=\[\d{2}:\d{2}:\d{2}\] \[INFO\] fetched data logged to text files)",
-                              sqlmap_output, re.DOTALL)
-
-            if extract_data:
-                extracted_data = extract_data.group(0)
+            if result_content.strip():
                 sqlmap_cmd_options = sqlmap_cmd.split('.request', 1)[-1].strip()
-                # sqlmap_cmd_options = re.search(r'\.request\s+(.*)', sqlmap_cmd, re.DOTALL).group(1)
                 issue_detail = """
                 The web application was tested using SQLMap, an automated SQL injection and database takeover tool.
                 This testing was conducted to verify a potential SQL injection vulnerability identified in the target
                 endpoint..<br><br>Command used to verify the SQL injection vulnerability:
                 <br><br><pre>python sqlmap.py -r host_sqlmap_timestamp.request """ + sqlmap_cmd_options + """</pre>
                 <br>The following output from SQLMap provides technical details confirming the vulnerability:
-                <br><br><pre>""" + "<br>".join(extracted_data.splitlines()) + """</pre><br>
+                <br><br><pre>""" + "<br>".join(result_content.splitlines()) + """</pre><br>
                 <br><b>Issue background</b><br><br>
                 SQL injection vulnerabilities arise when user-controllable data is incorporated into database SQL queries
                 in an unsafe manner. An attacker can supply crafted input to break out of the data context in which their
@@ -154,7 +148,8 @@ def run_sqlmap(sqlmap_cmd, request_url, request_file, messageInfo, httpService, 
 
             print("[DONE] SQLMap completed for {}".format(request_url))
         except Exception as e:
-            print("[ERROR] Error writing file: %s" % str(e))
+            print("[ERROR] Error reading file: %s" % str(e))
+            # print("[ERROR] Error writing file: %s" % str(e))
     except subprocess.CalledProcessError as e:
         print('[ERROR] Return code:', e.returncode)
         print(e.output)
@@ -439,7 +434,7 @@ class BurpExtender(IBurpExtender, ITab, IContextMenuFactory, IScannerListener):
                                                            request_file, sqlmap_options_str)
 
         thread = threading.Thread(target=run_sqlmap,
-                                  args=(sqlmap_cmd, request_url, request_file, messageInfo, service, self._callbacks))
+                                  args=(sqlmap_cmd, request_url, host, request_file, messageInfo, service, self._callbacks))
         thread.start()
 
     def newScanIssue(self, issue):
