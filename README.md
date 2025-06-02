@@ -17,12 +17,12 @@ an automated SQL injection and database takeover tool.
 
 Before installing the extension, ensure the following:
 
-| Component       | Required | Notes                                                                                                                                                                  |
-|-----------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| BurpSuite       | ✅        | [Professional version](https://portswigger.net/burp/documentation/desktop/getting-started/download-and-install)                                                        |
-| Jython          | ✅        | [Download Jython](https://www.jython.org/download) (e.g., `jython-standalone-2.7.4.jar`)                                                                               |
-| Python (Jython) | ✅        | Must use Python 2.7 syntax                                                                                                                                             |
-| SQLMap          | ✅        | Ensure [`sqlmap`](https://sqlmap.org/) is installed and added to Environment Variable<br/>- Windows: `set sqlmap=sqlmap_path`<br/>- Linux: `export sqlmap=sqlmap_path` |
+| Component | Required | Notes                                                                                                                                                                  |
+|-----------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| BurpSuite | ✅        | [Professional version](https://portswigger.net/burp/documentation/desktop/getting-started/download-and-install)                                                        |
+| Jython    | ✅        | [Download Jython](https://www.jython.org/download) (e.g., `jython-standalone-2.7.4.jar`)                                                                               |
+| Python    | ✅        | [Download Python](www.python.org/downloads/) 3.10 or later                                                                                                             |
+| SQLMap    | ✅        | Ensure [`sqlmap`](https://sqlmap.org/) is installed and added to Environment Variable<br/>- Windows: `set sqlmap=sqlmap_path`<br/>- Linux: `export sqlmap=sqlmap_path` |
 
 
 ## Set Permanent Environment Variable
