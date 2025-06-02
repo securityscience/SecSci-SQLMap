@@ -352,10 +352,6 @@ class BurpExtender(IBurpExtender, ITab, IContextMenuFactory, IScannerListener):
         load_button.setFont(Font("Arial", Font.BOLD, 10))
         save_settings_panel.add(load_button)
 
-        """run_button = JButton("Run Test", actionPerformed=self.call_run_sqlmap)
-        run_button.setFont(Font("Arial", Font.BOLD, 10))
-        save_settings_panel.add(run_button)"""
-
         # Add Panels to Main Content Panel
         row = 0
         col = 0
@@ -435,6 +431,8 @@ class BurpExtender(IBurpExtender, ITab, IContextMenuFactory, IScannerListener):
 
         thread = threading.Thread(target=run_sqlmap,
                                   args=(sqlmap_cmd, request_url, host, request_file, messageInfo, service, self._callbacks))
+        # thread.setName("SecSci-SQLMap-{}-{}".format(host, timestamp))
+        thread.name = "SecSci-SQLMap-{}-{}".format(host, timestamp)
         thread.start()
 
     def newScanIssue(self, issue):
@@ -559,7 +557,7 @@ class BurpExtender(IBurpExtender, ITab, IContextMenuFactory, IScannerListener):
                 f.write("-v=%s\n" % self.detection_verbosity_spinner.getValue())
                 sqlmap_options.append("-v {}".format(self.detection_verbosity_spinner.getValue()))
 
-                ### All Chekboxes ###
+                ### All Checkboxes ###
                 technique = ""
                 for checkboxes in [self.techniques_checkboxes, self.enumeration_checkboxes, self.advanced_checkboxes,
                                    self.connection_checkboxes, self.optimization_checkboxes]:
