@@ -11,7 +11,7 @@ an automated SQL injection and database takeover tool.
 - **Detailed Reporting**: Displays SesSci SQLMap results directly inside Burp’s Issues tab.
 - **Extender API Integration**: Seamlessly integrates with BurpSuite via the Extender API.
 - **Manual Execution Support**: Right-click on a target URL request and choose "Extensions → SecSci SQLMap" to manually execute SecSci SQLMap.
-- 
+
 
 ## Prerequisites
 
